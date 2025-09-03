@@ -3,12 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Binance Futures Scanner — Fixed</title>
+  <title>Crypto Futures Scanner — Fixed</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
-    <h1>Binance Futures Scanner — Fixed</h1>
+    <h1>Crypto Futures Scanner — Long / Short</h1>
+
     <div class="controls">
       <label>Timeframe:
         <select id="timeframe">
@@ -17,53 +18,34 @@
           <option value="1d">1d</option>
         </select>
       </label>
-      <label>Top N:
-        <input id="topN" type="number" value="100">
-      </label>
-      <label>Ambil hasil:
-        <input id="take" type="number" value="40">
-      </label>
       <label>Jumlah candle:
         <input id="candles" type="number" value="300">
       </label>
-      <label>Concurrency:
-        <input id="concurrency" type="number" value="5">
+      <label>Modal (USD):
+        <input id="modal" type="number" value="1000">
       </label>
-      <button id="start">Scan Sekarang</button>
+      <label>Risk (%):
+        <input id="risk" type="number" value="1">
+      </label>
+      <label>Top N USDT:
+        <input id="topN" type="number" value="30">
+      </label>
+      <label>Concurrency:
+        <input id="concurrency" type="number" value="6">
+      </label>
+      <button id="start">Start Scan</button>
       <button id="stop">Stop</button>
-      <button id="analysis">Analisa</button>
     </div>
+
     <div id="status">Status: idle</div>
 
     <h2>Hasil Scan</h2>
-    <table id="tbl">
-      <thead>
-        <tr>
-          <th>#</th><th>Symbol</th><th>Harga</th><th>24h%</th>
-          <th>Signal</th><th>Score</th><th>Entry</th>
-          <th>SL</th><th>TP1</th><th>TP2</th><th>TP3</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-
-    <h2>Logs</h2>
-    <pre id="logs"></pre>
-  </div>
-
-  <!-- Modal Analisa -->
-  <div id="analysisModal" class="modal">
-    <div class="modal-content">
-      <span id="closeModal" class="close">&times;</span>
-      <h2>Analisa yang Digunakan</h2>
-      <p id="analysisText"></p>
-    </div>
+    <div id="results"></div>
   </div>
 
   <!-- Footer Kredit -->
   <footer>
-    <p>Dibuat oleh : <strong>ZAIN.NET</strong></p>
-    <p>Untuk informasi tentang aplikasi ini hubungi no WA : <strong>085231176597</strong></p>
+    <p><strong>CREATE BY ZAIN.NET WA 085231176597</strong></p>
   </footer>
 
   <script src="app.js"></script>

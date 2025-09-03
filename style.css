@@ -5,22 +5,51 @@ body {
   margin: 0;
   padding: 0;
 }
-.container { max-width: 1200px; margin: auto; padding: 20px; }
-h1 { text-align: center; color: #58a6ff; }
-.controls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
-.controls label { display: flex; flex-direction: column; font-size: 14px; }
-button { background: #238636; border: none; color: white; padding: 8px 12px; cursor: pointer; border-radius: 6px; }
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+h1 {
+  text-align: center;
+  color: #58a6ff;
+}
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+.controls label {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+}
+button {
+  background: #238636;
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 6px;
+}
 button:hover { background: #2ea043; }
-#tbl { width: 100%; border-collapse: collapse; margin-top: 10px; }
-#tbl th, #tbl td { border: 1px solid #30363d; padding: 6px; text-align: center; }
-#tbl th { background: #161b22; }
-pre { background: #161b22; padding: 10px; border-radius: 6px; overflow-x: auto; }
-
-/* Modal Analisa */
-.modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); }
-.modal-content { background: #161b22; margin: 10% auto; padding: 20px; border-radius: 8px; width: 80%; color: #c9d1d9; }
-.close { float: right; font-size: 24px; cursor: pointer; }
-
-/* Footer Kredit */
-footer { margin-top: 30px; text-align: center; font-size: 14px; color: #8b949e; }
+#results {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 10px;
+}
+.card {
+  background: #161b22;
+  border: 1px solid #30363d;
+  padding: 10px;
+  border-radius: 8px;
+}
+footer {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #8b949e;
+}
 footer strong { color: #58a6ff; }

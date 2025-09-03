@@ -3,23 +3,15 @@ const PROXY = "https://api.allorigins.win/raw?url=";
 
 const startBtn = document.getElementById("start");
 const stopBtn = document.getElementById("stop");
-const analysisBtn = document.getElementById("analysis");
-const logs = document.getElementById("logs");
 const statusEl = document.getElementById("status");
-const tbody = document.querySelector("#tbl tbody");
-
-const modal = document.getElementById("analysisModal");
-const closeModal = document.getElementById("closeModal");
-const analysisText = document.getElementById("analysisText");
+const resultsEl = document.getElementById("results");
 
 let stopFlag = false;
-let results = [];
 
-// Logger
+// Logger sederhana
 function log(msg) {
-  const time = new Date().toLocaleTimeString();
-  logs.textContent += `[${time}] ${msg}\n`;
-  logs.scrollTop = logs.scrollHeight;
+  console.log(msg);
+  statusEl.textContent = "Status: " + msg;
 }
 
 // Fetch dengan proxy fallback
@@ -27,7 +19,6 @@ async function fetchWithProxy(url) {
   try {
     let res = await fetch(url);
     if (!res.ok) {
-      log(`Direct fetch failed: ${res.status}`);
       res = await fetch(PROXY + encodeURIComponent(url));
     }
     if (!res.ok) throw new Error("Fetch gagal: " + res.status);
@@ -38,83 +29,54 @@ async function fetchWithProxy(url) {
   }
 }
 
-// Ambil data harga 24h
+// Ambil data ticker
 async function fetchTickers() {
-  const url = BASE + "/fapi/v1/ticker/24hr";
-  return await fetchWithProxy(url);
+  return await fetchWithProxy(BASE + "/fapi/v1/ticker/24hr");
 }
 
-// Jalankan scan
+// Scan
 async function runScan() {
   stopFlag = false;
-  results = [];
-  tbody.innerHTML = "";
-  statusEl.textContent = "Status: scanning...";
-  log("Mulai scan...");
+  resultsEl.innerHTML = "";
+  log("Scanning...");
 
   try {
     const tickers = await fetchTickers();
-    log(`Total symbols: ${tickers.length}`);
+    const topN = parseInt(document.getElementById("topN").value) || 30;
+    const modalUSD = parseFloat(document.getElementById("modal").value) || 1000;
+    const riskPct = parseFloat(document.getElementById("risk").value) || 1;
 
-    let topN = parseInt(document.getElementById("topN").value) || 100;
     const sliced = tickers.slice(0, topN);
-
     let i = 0;
     for (let t of sliced) {
       if (stopFlag) break;
       i++;
-      const row = {
-        no: i,
-        symbol: t.symbol,
-        price: t.lastPrice,
-        change: t.priceChangePercent,
-        signal: Math.random() > 0.5 ? "BUY" : "SELL",
-        score: (Math.random() * 100).toFixed(2),
-        entry: t.lastPrice,
-        sl: (t.lastPrice * 0.98).toFixed(4),
-        tp1: (t.lastPrice * 1.06).toFixed(4), // Risk:Reward 1:3
-        tp2: "Resisten 1",
-        tp3: "Resisten 2",
-      };
-      results.push(row);
-      appendRow(row);
+
+      const entry = parseFloat(t.lastPrice);
+      const sl = (entry * (1 - riskPct / 100)).toFixed(4);
+      const tp1 = (entry * (1 + (riskPct / 100) * 3)).toFixed(4); // fixed 1:3
+      const tp2 = "Resisten 1";
+      const tp3 = "Resisten 2";
+
+      const div = document.createElement("div");
+      div.className = "card";
+      div.innerHTML = `
+        <h3>${i}. ${t.symbol}</h3>
+        <p>Entry: ${entry}</p>
+        <p>SL: ${sl}</p>
+        <p>TP1 (1:3): ${tp1}</p>
+        <p>TP2: ${tp2}</p>
+        <p>TP3: ${tp3}</p>
+        <p>Perubahan 24h: ${t.priceChangePercent}%</p>
+      `;
+      resultsEl.appendChild(div);
     }
-    statusEl.textContent = "Status: selesai";
-    log("Scan selesai");
+
+    log("Selesai");
   } catch (err) {
-    statusEl.textContent = "Status: error";
-    log("Scan gagal: " + err.message);
+    log("Error: " + err.message);
   }
 }
 
-// Tambah baris ke tabel
-function appendRow(row) {
-  const tr = document.createElement("tr");
-  tr.innerHTML = `
-    <td>${row.no}</td>
-    <td>${row.symbol}</td>
-    <td>${row.price}</td>
-    <td>${row.change}%</td>
-    <td>${row.signal}</td>
-    <td>${row.score}</td>
-    <td>${row.entry}</td>
-    <td>${row.sl}</td>
-    <td>${row.tp1}</td>
-    <td>${row.tp2}</td>
-    <td>${row.tp3}</td>
-  `;
-  tbody.appendChild(tr);
-}
-
-// Tampilkan modal analisa
-analysisBtn.onclick = () => {
-  analysisText.textContent =
-    "Analisa ini menggunakan kombinasi metode teknikal dasar yang meliputi identifikasi tren utama, level support dan resistance penting, pola candlestick, serta pergerakan harga dalam jangka pendek. Pendekatan ini membantu trader dalam menentukan titik masuk, target keuntungan, dan batas kerugian secara terukur. Dengan demikian keputusan trading lebih terarah, disiplin, dan sesuai kondisi pasar yang sedang berlangsung.";
-  modal.style.display = "block";
-};
-
-closeModal.onclick = () => { modal.style.display = "none"; };
-window.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
-
 startBtn.onclick = runScan;
-stopBtn.onclick = () => { stopFlag = true; statusEl.textContent = "Status: dihentikan"; };
+stopBtn.onclick = () => { stopFlag = true; log("Dihentikan"); };
